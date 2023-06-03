@@ -20,7 +20,12 @@ function Register() {
         console.log(event.target.value);
         setValues({ [event.target.name]: event.target.value})
     }
-    
+    const handleValidation = (event) => {
+        const [username, email, password, confirmPassword] = values;
+        if(password != confirmPassword){
+            
+        }
+    }
     
 
     return (
