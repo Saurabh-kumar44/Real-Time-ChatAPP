@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import Logo from '../assets/logo.svg';
 import styled from 'styled-components'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Register() {
     const [values, setValues] = useState({
@@ -13,19 +15,39 @@ function Register() {
    
     const handleSubmit = (event) => {
         event.preventDefault();
-        alert("form")
+        handleValidation();
     }
     const handleChange = (event) => {
-        console.log(event.target.name);
-        console.log(event.target.value);
-        setValues({ [event.target.name]: event.target.value})
+        // console.log(event.target.name);
+        // console.log(event.target.value);
+        setValues({...values, [event.target.name]: event.target.value})
+    }
+    const toastOption = {
+        position: "bottom-right",
+        autoClose: 8000,
+        draggable: true,
+        pauseOnHover: true,
+        theme: "dark"
     }
     const handleValidation = (event) => {
-        const [username, email, password, confirmPassword] = values;
-        if(password != confirmPassword){
-            
+        const {password, confirmPassword, username, email} = values;
+        console.log(password, confirmPassword);
+            if (password !== confirmPassword) {
+                toast.error("Password and confirm password do not match", 
+                toastOption);
+                return false;
+            } else if(username.length < 3){
+                toast.error("User name must be greater than 3 characters", 
+                toastOption);
+            } else if(password.length < 8){
+                toast.error("Password must be equal to or greater than 8 characters",
+                toastOption);
+                return false;
+            } else if(email === ''){
+                toast.error("Email required", toastOption);
+                return false;
+            } return true;
         }
-    }
     
 
     return (
@@ -44,6 +66,7 @@ function Register() {
                     <span>  Already have an account? <Link to="/login">Login</Link></span>
                 </form>
             </FormContainer>
+            <ToastContainer/>
         </>
     )
 }
