@@ -4,6 +4,8 @@ import Logo from '../assets/logo.svg';
 import styled from 'styled-components'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import { registerRoute } from '../utils/APIRoutes';
 
 function Register() {
     const [values, setValues] = useState({
@@ -12,15 +14,24 @@ function Register() {
         password: "",
         confirmPassword: "",
     })
-   
-    const handleSubmit = (event) => {
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        handleValidation();
+        if (handleValidation()) {
+            console.log("INside validation");
+            const { password, username, email } = values;
+            //sending post request to the register route URL with these paramenter to the backend server
+            const { data } = await axios.post(registerRoute, {
+                username,
+                email,
+                password
+            })
+        };
     }
     const handleChange = (event) => {
         // console.log(event.target.name);
         // console.log(event.target.value);
-        setValues({...values, [event.target.name]: event.target.value})
+        setValues({ ...values, [event.target.name]: event.target.value })
     }
     const toastOption = {
         position: "bottom-right",
@@ -30,32 +41,32 @@ function Register() {
         theme: "dark"
     }
     const handleValidation = (event) => {
-        const {password, confirmPassword, username, email} = values;
+        const { password, confirmPassword, username, email } = values;
         console.log(password, confirmPassword);
-            if (password !== confirmPassword) {
-                toast.error("Password and confirm password do not match", 
+        if (password !== confirmPassword) {
+            toast.error("Password and confirm password do not match",
                 toastOption);
-                return false;
-            } else if(username.length < 3){
-                toast.error("User name must be greater than 3 characters", 
+            return false;
+        } else if (username.length < 3) {
+            toast.error("User name must be greater than 3 characters",
                 toastOption);
-            } else if(password.length < 8){
-                toast.error("Password must be equal to or greater than 8 characters",
+        } else if (password.length < 8) {
+            toast.error("Password must be equal to or greater than 8 characters",
                 toastOption);
-                return false;
-            } else if(email === ''){
-                toast.error("Email required", toastOption);
-                return false;
-            } return true;
-        }
-    
+            return false;
+        } else if (email === '') {
+            toast.error("Email required", toastOption);
+            return false;
+        } return true;
+    }
+
 
     return (
         <>
             <FormContainer>
                 <form onSubmit={(event) => { handleSubmit(event) }}>
                     <div className="brand">
-                        <img src={Logo} alt="Logo"style={{height:"5rem"}}/>
+                        <img src={Logo} alt="Logo" style={{ height: "5rem" }} />
                         <h1>Snappy</h1>
                     </div>
                     <input type="text" placeholder='Username' name='username' onChange={e => { handleChange(e) }} />
@@ -66,7 +77,7 @@ function Register() {
                     <span>  Already have an account? <Link to="/login">Login</Link></span>
                 </form>
             </FormContainer>
-            <ToastContainer/>
+            <ToastContainer />
         </>
     )
 }
