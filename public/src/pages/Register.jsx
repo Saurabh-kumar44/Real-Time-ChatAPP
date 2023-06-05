@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, json, useNavigate } from 'react-router-dom';
 import Logo from '../assets/logo.svg';
 import styled from 'styled-components'
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import { registerRoute } from '../utils/APIRoutes';
 
 function Register() {
+    const navigate = useNavigate();
     const [values, setValues] = useState({
         username: "",
         email: "",
@@ -18,16 +19,24 @@ function Register() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (handleValidation()) {
-            console.log("INside validation");
+            console.log("Inside validation");
             const { password, username, email } = values;
             //sending post request to the register route URL with these paramenter to the backend server
             const { data } = await axios.post(registerRoute, {
                 username,
                 email,
                 password
-            })
-        };
-    }
+            });
+            if(data.status === false){
+                toast.error(data.msg, toastOption);
+            }
+            if(data.status === true){
+                localStorage.setItem('chat-app-user', JSON.stringify(data.user))
+                //if everything is ok then navigate to the login page
+                navigate('/')
+            }
+        }
+    };
     const handleChange = (event) => {
         // console.log(event.target.name);
         // console.log(event.target.value);
