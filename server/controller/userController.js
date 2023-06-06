@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 const register = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
 
     // Checking if username or email already exist
     const usernameCheck = await User.findOne({ username });
@@ -40,4 +40,28 @@ const register = async (req, res, next) => {
   }
 };
 
-export { register };
+const login = async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+
+    // Checking if username or email already exist
+    const userL = await User.findOne({ username });
+    if (!userL) {
+      return res.json({ msg: "Incorrect username or password", status: false });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, userL.password);
+    if (!isPasswordValid) {
+      return res.json({ msg: "Incorrect username or password", status: false });
+    }
+    // Remove the password field from the returned user object(extracting the password and storing the remaining data into the userData)
+    const { password: _password, ...userData } = userL.toObject();
+    //here it return the response to the client
+    return res.json({ status: true, user: userData });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export { register, login };
