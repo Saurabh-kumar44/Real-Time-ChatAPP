@@ -46,6 +46,13 @@ function Login() {
     pauseOnHover: true,
     theme: "dark"
   }
+
+  useEffect(() => {
+    if(localStorage.getItem("chat-app-user")){
+      navigate('/');
+    }
+  })
+
   const handleValidation = (event) => {
     const { password, username } = values;
     console.log(password);
@@ -58,6 +65,7 @@ function Login() {
       return false;
     } return true;
   }
+
 
 
   return (
