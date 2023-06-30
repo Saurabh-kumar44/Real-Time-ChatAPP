@@ -74,12 +74,12 @@ export default function SetAvatar() {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading ? ( //added loader
         <Container>
           <img src={loader} alt="loader" className="loader" />
         </Container>
-      ) : (
-        <Container>
+      ) : (         //else profile will appear
+        <Container>  
           <div className="title-container">
             <h1>Pick an Avatar as your profile picture</h1>
           </div>
