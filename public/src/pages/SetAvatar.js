@@ -22,23 +22,22 @@ export default function SetAvatar() {
     theme: "dark",
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     const checkLocalStorage = async () => {
-      if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      if (!localStorage.getItem("chat-app-user")) {
+        navigate('/login')
       }
     };
     checkLocalStorage();
   }, []);
 
-
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
       toast.error("Please select an avatar", toastOptions);
     } else {
-      const user = await JSON.parse(
-        localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-      );
-
+      //getting the key from local storage 
+      const user = await JSON.parse(localStorage.getItem("chat-app-user"));
+      console.log(user._id);
       const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
         image: avatars[selectedAvatar],
       });
@@ -79,7 +78,7 @@ export default function SetAvatar() {
           <img src={loader} alt="loader" className="loader" />
         </Container>
       ) : (         //else profile will appear
-        <Container>  
+        <Container>
           <div className="title-container">
             <h1>Pick an Avatar as your profile picture</h1>
           </div>
@@ -87,9 +86,8 @@ export default function SetAvatar() {
             {avatars.map((avatar, index) => {
               return (
                 <div key={index}
-                  className={`avatar ${
-                    selectedAvatar === index ? "selected" : ""
-                  }`}
+                  className={`avatar ${selectedAvatar === index ? "selected" : ""
+                    }`}
                 >
                   <img
                     src={`data:image/svg+xml;base64,${avatar}`}
