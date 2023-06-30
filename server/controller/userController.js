@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 const register = async (req, res, next) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
 
     // Checking if username or email already exist
     const usernameCheck = await User.findOne({ username });
