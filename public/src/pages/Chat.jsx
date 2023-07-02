@@ -10,6 +10,8 @@ function Chat() {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState([]);
   const [currentUser, setCurrentUser] = useState(undefined);
+  const [currentChat, setCurrentChat] = useState(undefined);
+
 
   useEffect(() => { 
     const checkLocalStorage = async () => {
@@ -23,6 +25,11 @@ function Chat() {
     };
     checkLocalStorage();
   }, [navigate]);
+
+  const handleChatChange = (chat) => {
+    console.log("click",chat.username);
+    setCurrentChat(chat);
+  }
 
   
   //afterwards if we have the current user then we gonna call the api
@@ -51,7 +58,7 @@ function Chat() {
   return (
     <Container>
       <div className="container">
-        <Contact contacts={contacts} currentUser={currentUser} name={"saurav"}/>
+        <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>
       </div>
     </Container>
   )

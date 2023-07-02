@@ -3,10 +3,11 @@ import { useState } from 'react';
 import styled from 'styled-components'
 import logo from '../assets/logo.svg'
 
-function Contact({ contacts, currentUser }) {
+function Contact({ contacts, currentUser, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
+
   useEffect(() => {
     console.log(contacts);
     if (currentUser) {
@@ -16,8 +17,10 @@ function Contact({ contacts, currentUser }) {
     }
   }, [currentUser]);
   const changeCurrentChat = (index, contact) => {
-
+    setCurrentSelected(index);
+    changeChat(contact);
   }
+
 
 
   return (
@@ -33,19 +36,9 @@ function Contact({ contacts, currentUser }) {
               {
                 contacts.map((contact, index) => {
                   return (
-                    <div className={`contact ${index === currentSelected ? "selected" : ""}`} key={index}>
-                      <div className="avatar">
-                        <img src={`data:image/svg+xml;base64,${contact.avatarImage}`}
-                          alt="avatar" />
-                      </div>
-                      <div className="username">{contact.username}</div>
-                    </div>
-                  )
-                })};
-                {
-                contacts.map((contact, index) => {
-                  return (
-                    <div className={`contact ${index === currentSelected ? "selected" : ""}`} key={index}>
+                    <div
+                      className={`contact ${index === currentSelected ? 'selected' : ''}`}
+                      key={index}onClick={() => changeCurrentChat(index, contact)}> 
                       <div className="avatar">
                         <img src={`data:image/svg+xml;base64,${contact.avatarImage}`}
                           alt="avatar" />
@@ -58,7 +51,7 @@ function Contact({ contacts, currentUser }) {
             <div className='current-user'>
               <div className="avatar">
                 <img src={`data:image/svg+xml;base64,${currentUserImage}`}
-                  alt="avatar" className='cUser'/>
+                  alt="avatar" className='cUser' />
               </div>
               <h2 className="username">{currentUserName}</h2>
             </div>
@@ -101,6 +94,9 @@ background-color: #080420;
       border-radius:1rem;
     }
   }
+  .contact.selected {
+    background-color: #9186f3;
+  }
   .contact{
     background-color:#ffffff36;
     min-height: 5rem;
@@ -112,6 +108,9 @@ background-color: #080420;
     display: flex;
     align-items: center;
     transition: 0.5s ease-in-out;
+    .selected {
+      background-color: #9a86f3;
+    }
     .username{
       color: white;
     }
@@ -119,9 +118,6 @@ background-color: #080420;
       img{
         height: 3rem;
       }
-    }
-    .selected{
-      background-color: #9186f3;
     }
   }
 }
