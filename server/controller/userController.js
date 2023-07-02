@@ -43,6 +43,7 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
+    console.log(req.body);
 
     // Checking if username or email already exist
     const userL = await User.findOne({ username });
@@ -78,7 +79,22 @@ const setAvatar = async (req, res, next) => {
   } catch (ex) {
     next(ex);
   }
-
 };
 
-export { register, login, setAvatar };
+//I'm gonna call this api from the chat.jsx(getting all user id except our id)
+const allUsers = async (req, res, next) => {
+  try{
+    //getting all user id except our id
+    const users = await User.find({ _id: { $ne: req.params.id } }).select([
+      "email",
+      "username",
+      "avatarImage",
+      "_id"
+    ]);
+    return res.json(users);
+  }catch(ex){
+    next(ex);
+  }
+};
+
+export { register, login, setAvatar, allUsers };
