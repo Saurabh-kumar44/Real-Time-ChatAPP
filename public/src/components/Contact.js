@@ -15,7 +15,8 @@ function Contact({ contacts, currentUser, changeChat }) {
       setCurrentUserName(currentUser.username);
 
     }
-  }, [currentUser]);
+  }, [currentUser,contacts]);
+
   const changeCurrentChat = (index, contact) => {
     setCurrentSelected(index);
     changeChat(contact);
