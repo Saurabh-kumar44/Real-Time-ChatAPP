@@ -26,6 +26,9 @@ const Button = styled.button`
     background-color: #9a86f3;
     border: none;
     cursor: pointer;
+    :hover{
+        background-color: #8d77f2;
+    }
     svg{
         font-size:1.3rem;
         color: #ebe7ff;
