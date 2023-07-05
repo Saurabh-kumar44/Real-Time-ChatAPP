@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, json, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../assets/logo.svg';
 import styled from 'styled-components'
 import { ToastContainer, toast } from 'react-toastify';

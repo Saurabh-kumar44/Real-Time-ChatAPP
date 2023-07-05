@@ -29,7 +29,7 @@ export default function SetAvatar() {
       }
     };
     checkLocalStorage();
-  }, []);
+  }, [navigate]);
 
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
