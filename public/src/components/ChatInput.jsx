@@ -5,14 +5,19 @@ import { BsEmojiSmileFill } from 'react-icons/bs';
 import Picker from 'emoji-picker-react'
 
 function ChatInput() {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(undefined);
-  
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const handleEmojiPicker = () => {
+    setShowEmojiPicker(!showEmojiPicker);
+  }
 
   return (
     <Container>
       <div className="button-container">
         <div className="emoji">
-          <BsEmojiSmileFill />
+          <BsEmojiSmileFill onClick={handleEmojiPicker}/>
+          {
+            showEmojiPicker && <Picker/>
+          }
         </div>
       </div>
       <form className="input-container">
