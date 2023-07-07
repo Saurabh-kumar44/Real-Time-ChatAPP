@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BsSendFill } from 'react-icons/bs';
 import { BsEmojiSmileFill } from 'react-icons/bs';
-import { Picker } from 'emoji-mart'
-
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 function ChatInput() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [msg, setMsg] = useState("");
@@ -11,11 +11,9 @@ function ChatInput() {
   const handleEmojiPickerHideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   }
-  const handleEmojiClick = (event, emoji) => {
-    console.log(emoji.emoji);
-    let message = msg;
-    message += emoji.emoji;
-    setMsg(message);
+  const handleEmojiClick = ({ native }) => {
+    console.log(native); // '😃'    
+    setMsg((prevMsg) => prevMsg + native);//appending the native property twice
   }
 
   return (
@@ -24,7 +22,7 @@ function ChatInput() {
         <div className="emoji">
           <BsEmojiSmileFill onClick={handleEmojiPickerHideShow} />
           {
-            showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />
+            showEmojiPicker && <Picker data={data} onEmojiSelect={handleEmojiClick}/>
           }
         </div>
       </div>
@@ -60,10 +58,6 @@ const Container = styled.div`
         cursor: pointer;
         font-size: 1.5rem;
         color: yellow;
-      }
-      .emoji-picker-react{
-        position: absolute;
-        top: -350px;
       }
     }
   }
