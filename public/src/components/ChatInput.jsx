@@ -4,7 +4,8 @@ import { BsSendFill } from 'react-icons/bs';
 import { BsEmojiSmileFill } from 'react-icons/bs';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-function ChatInput() {
+
+function ChatInput({handleSendMsg}) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -14,6 +15,14 @@ function ChatInput() {
   const handleEmojiClick = ({ native }) => {
     console.log(native); // '😃'    
     setMsg((prevMsg) => prevMsg + native);//appending the native property twice
+  }
+
+  const sendChat = (e) => {
+    e.preventDefault();
+    if(msg.length > 0){
+      handleSendMsg(msg);
+      setMsg('');
+    }
   }
 
   return (
@@ -26,7 +35,7 @@ function ChatInput() {
           }
         </div>
       </div>
-      <form className="input-container">
+      <form className="input-container" onSubmit={(e) => {sendChat(e)}}>
         <input type="text" className="input" placeholder="Type your message here!" value={msg} onChange={(e) => { setMsg(e.target.value) }} />
         <button className="submit">
           <BsSendFill />
@@ -58,6 +67,10 @@ const Container = styled.div`
         cursor: pointer;
         font-size: 1.5rem;
         color: yellow;
+      }
+      .em-emoji-picker {
+        
+        background-color: #080420;
       }
     }
   }
