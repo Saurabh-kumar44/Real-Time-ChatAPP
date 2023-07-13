@@ -61,7 +61,7 @@ const Container = styled.div`
     gap: 1rem;
     .emoji {
       position: relative;
-      bottom: 472px;
+      bottom: 540px;
       left: 200px;
       svg {
         cursor: pointer;

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Contact from '../components/Contact';
 import { allUsersRoute } from '../utils/APIRoutes';
 import Welcome from '../components/Welcome';
-import ChatContainer from '../components/chatContainer';
+import ChatContainer from '../components/ChatContainer';
 
 function Chat() {
   const navigate = useNavigate();
