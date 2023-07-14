@@ -7,7 +7,7 @@ function Logout() {
     const navigate = useNavigate();
     const handleClick = () => {
         localStorage.clear();
-        navigate('/');
+        navigate('/login');
     }
     return (
         <>

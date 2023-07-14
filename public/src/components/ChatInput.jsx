@@ -47,13 +47,14 @@ function ChatInput({handleSendMsg}) {
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 5% 95%;
   align-items: center;
+  grid-template-columns: 5% 95%;
   background-color: #080420;
-  padding: 0.2rem;
-  margin-top: 20rem;
-  padding-bottom: 0.3rem;
-
+  padding: 0 2rem;
+  @media screen and (min-width: 720px) and (max-width: 1080px) {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
   .button-container {
     display: flex;
     align-items: center;
@@ -61,65 +62,82 @@ const Container = styled.div`
     gap: 1rem;
     .emoji {
       position: relative;
-      bottom: 540px;
-      left: 200px;
       svg {
-        cursor: pointer;
         font-size: 1.5rem;
-        color: yellow;
+        color: #ffff00c8;
+        cursor: pointer;
       }
-      .em-emoji-picker {
-        
+      .emoji-picker-react {
+        position: absolute;
+        top: -350px;
         background-color: #080420;
+        box-shadow: 0 5px 10px #9a86f3;
+        border-color: #9a86f3;
+        .emoji-scroll-wrapper::-webkit-scrollbar {
+          background-color: #080420;
+          width: 5px;
+          &-thumb {
+            background-color: #9a86f3;
+          }
+        }
+        .emoji-categories {
+          button {
+            filter: contrast(0);
+          }
+        }
+        .emoji-search {
+          background-color: transparent;
+          border-color: #9a86f3;
+        }
+        .emoji-group:before {
+          background-color: #080420;
+        }
       }
     }
   }
-
   .input-container {
     width: 100%;
-    height: 90%;
-    border-radius: 0.8rem;
+    border-radius: 2rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
     background-color: #ffffff34;
-    border: transparent;
     input {
       width: 90%;
-      height: 50%;
-      color: white;
+      height: 60%;
       background-color: transparent;
+      color: white;
       border: none;
-      padding: 0.4rem;
-      padding-left: 0.1rem;
+      padding-left: 1rem;
       font-size: 1.2rem;
+
       &::selection {
-        background-color: #9186f3;
+        background-color: #9a86f3;
       }
       &:focus {
         outline: none;
       }
     }
-    .submit {
+    button {
+      padding: 0.3rem 2rem;
+      border-radius: 2rem;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       background-color: #9a86f3;
-      color: white;
       border: none;
-      border-radius: 30%;
-      width: 4rem;
-      height: 2.5rem;
-      cursor: pointer;
-  
+      @media screen and (min-width: 720px) and (max-width: 1080px) {
+        padding: 0.3rem 1rem;
+        svg {
+          font-size: 1rem;
+        }
+      }
       svg {
-        font-size: 1.7rem;
+        font-size: 2rem;
         color: white;
       }
     }
   }
-
-  
 `;
 
 export default ChatInput;

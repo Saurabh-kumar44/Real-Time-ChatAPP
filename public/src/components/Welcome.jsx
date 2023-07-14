@@ -48,13 +48,13 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
   color: white;
+  flex-direction: column;
   img {
     height: 20rem;
   }
   span {
-    color: #4e00ff;
+    color: #4e0eff;
   }
 `;
 
