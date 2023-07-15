@@ -35,7 +35,7 @@ export default function ChatContainer({ currentChat, currentUser }) {
       });
 
       // setMessages((prevMessages) => [...prevMessages, { fromSelf: true, message: msg }]);// with this directly chat updated
-      setMessages((prevMessages) => [...prevMessages ,msg]);//with this refresh required(implement socket to prevent this)
+      // setMessages((prevMessages) => [...prevMessages ,msg]);//with this refresh required(implement socket to prevent this)
     } catch (error) {
       console.log("Error sending message:", error);
     }
