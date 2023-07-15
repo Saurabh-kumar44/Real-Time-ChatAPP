@@ -1,12 +1,12 @@
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import React, { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Contact from '../components/Contact';
 import { allUsersRoute, host } from '../utils/APIRoutes';
 import Welcome from '../components/Welcome';
 import ChatContainer from '../components/ChatContainer';
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client';
 
 function Chat() {
   const navigate = useNavigate();
@@ -15,67 +15,57 @@ function Chat() {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [currentChat, setCurrentChat] = useState(undefined);
 
-
-  useEffect(() => { 
+  useEffect(() => {
     const checkLocalStorage = async () => {
-      //if their is no current user redirect to login page
-    if (!localStorage.getItem("chat-app-user")) {
-      navigate('/login');
-    }else{
-       //setting up the current user
-       setCurrentUser(JSON.parse(localStorage.getItem("chat-app-user")));
+      if (!localStorage.getItem('chat-app-user')) {
+        navigate('/login');
+      } else {
+        setCurrentUser(JSON.parse(localStorage.getItem('chat-app-user')));
       }
     };
     checkLocalStorage();
   }, [navigate]);
 
-  //this useEffect hook sets up the Socket.IO connection when the currentUser value changes, ensuring that the user is connected to the server and their presence is registered.
   useEffect(() => {
     if (currentUser) {
       socket.current = io(host);
-      socket.current.emit("add-user", currentUser._id);
+      socket.current.on('connect', () => {
+        console.log('Socket connected');
+        socket.current.emit('add-user', currentUser._id);
+      });
     }
   }, [currentUser]);
 
   const handleChatChange = (chat) => {
-    console.log("click",chat.username);
     setCurrentChat(chat);
-  }
+  };
 
-  
-  //afterwards if we have the current user then we gonna call the api
-  //(in this we gonna check if the current user set their image if not the redirect to the setAvatar after setting up get all the contact from this api and setted to "setContacts")
   useEffect(() => {
     const fetchData = async () => {
       if (currentUser) {
         if (currentUser.isAvatarImageSet) {
           try {
-            // console.log(currentUser._id);
-            const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-            setContacts(data.data);
+            const response = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+            setContacts(response.data);
           } catch (error) {
-            console.error("Error fetching contacts:", error);
+            console.error('Error fetching contacts:', error);
           }
         } else {
-          navigate("/setAvatar");
+          navigate('/setAvatar');
         }
       }
     };
     fetchData();
   }, [currentUser, navigate]);
-  
-
 
   return (
     <Container>
       <div className="container">
-        <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>
-        {
-          currentChat === undefined ? (<Welcome />): <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket}/>
-        }
+        <Contact contacts={contacts} currentUser={currentUser} changeChat={handleChatChange} />
+        {currentChat === undefined ? <Welcome /> : <ChatContainer currentChat={currentChat} currentUser={currentUser} socket={socket} />}
       </div>
     </Container>
-  )
+  );
 }
 
 const Container = styled.div`
@@ -97,6 +87,7 @@ const Container = styled.div`
       grid-template-columns: 35% 65%;
     }
   }
-`;
+};
+`
 
-export default Chat
+export default Chat;

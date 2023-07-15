@@ -4,7 +4,7 @@ import ChatInput from "./ChatInput";
 import Logout from "./Logout";
 import axios from "axios";
 import { sendMessageRoute, getAllMessageRoute } from "../utils/APIRoutes";
-
+import { v4 as uuidv4 } from "uuid";
 
 export default function ChatContainer({ currentChat, currentUser, socket }) {
   const [messages, setMessages] = useState([]);
@@ -14,13 +14,11 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if(currentUser){
-
+        if (currentUser) {
           const response = await axios.post(getAllMessageRoute, {
             from: currentUser._id,
             to: currentChat._id,
           });
-          // console.log("Response:", response.data);
           setMessages(response.data);
         }
       } catch (error) {
@@ -29,7 +27,7 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
     };
 
     fetchData();
-  }, [currentChat, currentUser._id]);
+  }, [currentChat, currentUser]);
 
   const handleSendMsg = async (msg) => {
     try {
@@ -38,32 +36,30 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
         to: currentChat._id,
         message: msg,
       });
-      socket.current.emit("msg-sent", {
+      socket.current.emit("send-msg", {
         to: currentChat._id,
         from: currentUser._id,
         message: msg
-      })
+      });
+      console.log("Message sent successfully to the server");
       const msgs = [...messages];
-      msgs.push({fromSelf: true, message: msg});
+      msgs.push({ fromSelf: true, message: msg });
       setMessages(msgs);
-
-      // setMessages((prevMessages) => [...prevMessages, { fromSelf: true, message: msg }]);// with this directly chat updated
-      // setMessages((prevMessages) => [...prevMessages ,msg]);//with this refresh required(implement socket to prevent this)
     } catch (error) {
       console.log("Error sending message:", error);
     }
   };
   
-  //By setting up this event listener, the client can listen for incoming messages from the server and update the UI accordingly, providing a real-time chat experience.
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("msg-recieve", (msg) => {
+      socket.current.on("msg-receive", (msg) => {
+        console.log("Message received successfully");
+        console.log(msg);
         setArrivalMessage({ fromSelf: false, message: msg });
       });
     }
   }, [socket]);
 
-  //This useEffect hook is responsible for updating the messages state when the arrivalMessage changes. It ensures that the new arrival message is added to the existing list of messages.
   useEffect(() => {
     arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage]);
@@ -92,9 +88,9 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
         {
         messages.map((message, index) => {
           return (
-            <div key={index}>
+            <div ref={scrollRef} key={uuidv4()}>
               <div
-                className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
+                className={`message ${message.fromSelf ? "sended" : "received"}`}>
                 <div className="content ">
                   <p>{message.message}</p>
                 </div>
@@ -174,11 +170,11 @@ const Container = styled.div`
         background-color: #4f04ff21;
       }
     }
-    .recieved {
+    .received {
       justify-content: flex-start;
       .content {
         background-color: #9900ff20;
       }
     }
-  }
+  } 
 `;

@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import userRoute from './routes/userRoute.js'
 import messagesRout from './routes/messagesRout.js'
-import { Server as SocketIO } from 'socket.io';
+import { Server } from 'socket.io';
 
 dotenv.config();
 
@@ -30,7 +30,7 @@ const server = app.listen(process.env.PORT, () => {
 });
 
 // Instance of the Socket.IO server
-const io = new SocketIO(server, {
+const io = new Server(server, {
   cors: {
     origin: 'http://localhost:3000',
     credentials: true
@@ -41,14 +41,16 @@ global.onlineUsers = new Map(); // Stores all the online users inside the map
 
 // Whenever there is a connection, store the chatSocket inside the global chatSocket
 io.on('connection', (socket) => {
+  console.log("New Connection");
   global.chatSocket = socket;
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
   });
   socket.on("send-msg", (data) => {
-    const sendUserSocket = onlineUsers.get(data.io);
+    console.log("sendMsg", data);
+    const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-receive", data.msg);
+      socket.to(sendUserSocket).emit("msg-receive", data.message);
     }
   });
 });
