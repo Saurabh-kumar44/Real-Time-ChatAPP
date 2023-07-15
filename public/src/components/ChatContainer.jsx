@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
 import Logout from "./Logout";
@@ -8,16 +8,21 @@ import { sendMessageRoute, getAllMessageRoute } from "../utils/APIRoutes";
 
 export default function ChatContainer({ currentChat, currentUser, socket }) {
   const [messages, setMessages] = useState([]);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+  const scrollRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.post(getAllMessageRoute, {
-          from: currentUser._id,
-          to: currentChat._id,
-        });
-        // console.log("Response:", response.data);
-        setMessages(response.data);
+        if(currentUser){
+
+          const response = await axios.post(getAllMessageRoute, {
+            from: currentUser._id,
+            to: currentChat._id,
+          });
+          // console.log("Response:", response.data);
+          setMessages(response.data);
+        }
       } catch (error) {
         console.log("Error fetching messages:", error);
       }
@@ -49,6 +54,23 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
     }
   };
   
+  //By setting up this event listener, the client can listen for incoming messages from the server and update the UI accordingly, providing a real-time chat experience.
+  useEffect(() => {
+    if (socket.current) {
+      socket.current.on("msg-recieve", (msg) => {
+        setArrivalMessage({ fromSelf: false, message: msg });
+      });
+    }
+  }, [socket]);
+
+  //This useEffect hook is responsible for updating the messages state when the arrivalMessage changes. It ensures that the new arrival message is added to the existing list of messages.
+  useEffect(() => {
+    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
+  }, [arrivalMessage]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <Container>
