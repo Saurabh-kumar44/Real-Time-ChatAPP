@@ -72,6 +72,7 @@ const setAvatar = async (req, res, next) => {
       isAvatarImageSet: true,
       avatarImage
     });
+    console.log("SUccesfully setted");
     return res.json({
       isSet: userData.isAvatarImageSet,
       Image: userData.avatarImage

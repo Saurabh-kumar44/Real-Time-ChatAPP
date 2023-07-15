@@ -1,180 +1,195 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import ChatInput from "./ChatInput";
-import Logout from "./Logout";
 import axios from "axios";
-import { sendMessageRoute, getAllMessageRoute } from "../utils/APIRoutes";
-import { v4 as uuidv4 } from "uuid";
+import { Buffer } from "buffer";
+import loader from "../assets/loader.gif";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import { setAvatarRoute } from "../utils/APIRoutes";
 
-export default function ChatContainer({ currentChat, currentUser, socket }) {
-  const [messages, setMessages] = useState([]);
-  const [arrivalMessage, setArrivalMessage] = useState(null);
-  const scrollRef = useRef();
+export default function SetAvatar() {
+  const api = `https://api.multiavatar.com`;
+  const navigate = useNavigate();
+  const [avatars, setAvatars] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedAvatar, setSelectedAvatar] = useState(undefined);
+  const toastOptions = {
+    position: "bottom-right",
+    autoClose: 8000,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "dark",
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (currentUser) {
-          const response = await axios.post(getAllMessageRoute, {
-            from: currentUser._id,
-            to: currentChat._id,
-          });
-          setMessages(response.data);
-        }
-      } catch (error) {
-        console.log("Error fetching messages:", error);
+    const checkLocalStorage = async () => {
+      if (!localStorage.getItem("chat-app-user")) {
+        navigate("/login");
       }
     };
+    checkLocalStorage();
+  }, [navigate]);
 
-    fetchData();
-  }, [currentChat, currentUser]);
+  const debounce = (func, delay) => {
+    let timerId;
+    return function (...args) {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+      timerId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
+  };
 
-  const handleSendMsg = async (msg) => {
+  const fetchData = async () => {
     try {
-      await axios.post(sendMessageRoute, {
-        from: currentUser._id,
-        to: currentChat._id,
-        message: msg,
-      });
-      socket.current.emit("send-msg", {
-        to: currentChat._id,
-        from: currentUser._id,
-        message: msg
-      });
-      console.log("Message sent successfully to the server");
-      const msgs = [...messages];
-      msgs.push({ fromSelf: true, message: msg });
-      setMessages(msgs);
+      const data = [];
+      for (let i = 0; i < 4; i++) {
+        const image = await axios.get(
+          `${api}/${Math.round(Math.random() * 1000)}`
+        );
+        const buffer = Buffer.from(image.data);
+        data.push(buffer.toString("base64"));
+      }
+      setAvatars(data);
+      setIsLoading(false);
     } catch (error) {
-      console.log("Error sending message:", error);
+      console.log("Error fetching avatars:", error);
     }
   };
-  
+
+  const debouncedFetchData = debounce(fetchData, 1000); // Adjust the delay as needed
+
   useEffect(() => {
-    if (socket.current) {
-      socket.current.on("msg-receive", (msg) => {
-        console.log("Message received successfully");
-        console.log(msg);
-        setArrivalMessage({ fromSelf: false, message: msg });
-      });
+    debouncedFetchData();
+  }, [debouncedFetchData]);
+
+  const setProfilePicture = async () => {
+    if (selectedAvatar === undefined) {
+      toast.error("Please select an avatar", toastOptions);
+    } else {
+      try {
+        const user = JSON.parse(localStorage.getItem("chat-app-user"));
+        console.log(user._id);
+        const { data } = await axios.post(`${setAvatarRoute}/${user._id}`,{
+            image: avatars[selectedAvatar],
+          }
+        );
+
+        if (data.isSet) {
+          console.log("Successfully set image");
+          user.isAvatarImageSet = true;
+          user.avatarImage = data.image;
+          localStorage.setItem(
+            process.env.REACT_APP_LOCALHOST_KEY,
+            JSON.stringify(user)
+          );
+          navigate("/");
+        } else {
+          toast.error("Error setting avatar. Please try again.", toastOptions);
+        }
+      } catch (error) {
+        console.log("Error setting profile picture:", error);
+        toast.error("Error setting avatar. Please try again.", toastOptions);
+      }
     }
-  }, [socket]);
-
-  useEffect(() => {
-    arrivalMessage && setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage]);
-
-  useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  };
 
   return (
-    <Container>
-      <div className="chat-header">
-        <div className="user-details">
-          <div className="avatar">
-            <img
-              src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-              alt=""
-            />
+    <>
+      {isLoading ? (
+        <Container>
+          <img src={loader} alt="loader" className="loader" />
+        </Container>
+      ) : (
+        <Container>
+          <div className="title-container">
+            <h1>Pick an Avatar as your profile picture</h1>
           </div>
-          <div className="username" sx={{color: 'white'}}>
-            <h3>{currentChat.username}</h3>
-          </div>
-        </div>
-        <Logout />
-      </div>
-      <div className="chat-messages">
-        {
-        messages.map((message, index) => {
-          return (
-            <div ref={scrollRef} key={uuidv4()}>
+          <div className="avatars">
+            {avatars.map((avatar, index) => (
               <div
-                className={`message ${message.fromSelf ? "sended" : "received"}`}>
-                <div className="content ">
-                  <p>{message.message}</p>
-                </div>
+                key={index}
+                className={`avatar ${selectedAvatar === index ? "selected" : ""
+                  }`}
+                onClick={() => setSelectedAvatar(index)}
+              >
+                <img
+                  src={`data:image/svg+xml;base64,${avatar}`}
+                  alt="avatar"
+                />
               </div>
-            </div>
-          );
-        })}
-      </div>
-      <ChatInput handleSendMsg={handleSendMsg} />
-    </Container>
+            ))}
+          </div>
+          <button onClick={setProfilePicture} className="submit-btn">
+            Set as Profile Picture
+          </button>
+          <ToastContainer />
+        </Container>
+      )}
+    </>
   );
 }
 
 const Container = styled.div`
-  display: grid;
-  grid-template-rows: 10% 80% 10%;
-  gap: 0.1rem;
-  overflow: hidden;
-  @media screen and (min-width: 720px) and (max-width: 1080px) {
-    grid-template-rows: 15% 70% 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 3rem;
+  background-color: #131324;
+  height: 100vh;
+  width: 100vw;
+
+  .loader {
+    max-inline-size: 100%;
   }
 
-  .chat-header {
+  .title-container {
+    h1 {
+      color: white;
+    }
+  }
+
+  .avatars {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-    .user-details {
+    gap: 2rem;
+
+    .avatar {
+      border: 0.4rem solid transparent;
+      padding: 0.4rem;
+      border-radius: 5rem;
       display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 1rem;
-      .avatar {
-        img {
-          height: 3rem;
-          margin-top: 1.3rem;
-        }
+      transition: 0.5s ease-in-out;
+
+      img {
+        height: 6rem;
+        transition: 0.5s ease-in-out;
       }
-      .username {
-        h3 {
-          color: white;
-        }
+
+      &.selected {
+        border: 0.4rem solid #4e0eff;
       }
     }
   }
-  .chat-messages {
+
+  .submit-btn {
+    background-color: #4e0eff;
+    color: white;
     padding: 1rem 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow: auto;
-    &::-webkit-scrollbar {
-      width: 0.2rem;
-      &-thumb {
-        background-color: #ffffff39;
-        width: 0.1rem;
-        border-radius: 1rem;
-      }
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+
+    &:hover {
+      background-color: #4e0eff;
     }
-    .message {
-      display: flex;
-      align-items: center;
-      .content {
-        max-width: 40%;
-        overflow-wrap: break-word;
-        padding: 1rem;
-        font-size: 1.1rem;
-        border-radius: 1rem;
-        color: #d1d1d1;
-        @media screen and (min-width: 720px) and (max-width: 1080px) {
-          max-width: 70%;
-        }
-      }
-    }
-    .sended {
-      justify-content: flex-end;
-      .content {
-        background-color: #4f04ff21;
-      }
-    }
-    .received {
-      justify-content: flex-start;
-      .content {
-        background-color: #9900ff20;
-      }
-    }
-  } 
+  }
 `;
