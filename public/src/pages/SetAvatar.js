@@ -46,7 +46,7 @@ export default function SetAvatar() {
         console.log("succusfully image set");
         user.isAvatarImageSet = true;
         user.avatarImage = data.image;
-        localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY,JSON.stringify(user));
+        localStorage.setItem("chat-app-user",JSON.stringify(user));
         navigate("/");
       } else {
         toast.error("Error setting avatar. Please try again.", toastOptions);
@@ -63,6 +63,7 @@ export default function SetAvatar() {
         data.push(buffer.toString("base64"));
       }
       setAvatars(data);
+      console.log("Avatar Set");
       setIsLoading(false);
     };
 
