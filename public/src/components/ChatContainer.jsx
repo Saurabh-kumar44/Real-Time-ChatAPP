@@ -33,6 +33,14 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
         to: currentChat._id,
         message: msg,
       });
+      socket.current.emit("msg-sent", {
+        to: currentChat._id,
+        from: currentUser._id,
+        message: msg
+      })
+      const msgs = [...messages];
+      msgs.push({fromSelf: true, message: msg});
+      setMessages(msgs);
 
       // setMessages((prevMessages) => [...prevMessages, { fromSelf: true, message: msg }]);// with this directly chat updated
       // setMessages((prevMessages) => [...prevMessages ,msg]);//with this refresh required(implement socket to prevent this)
@@ -40,6 +48,7 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
       console.log("Error sending message:", error);
     }
   };
+  
 
   return (
     <Container>
