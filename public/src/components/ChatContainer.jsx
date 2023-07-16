@@ -47,6 +47,7 @@ export default function ChatContainer({ currentChat, currentUser, socket }) {
       setMessages(msgs);
     } catch (error) {
       console.log("Error sending message:", error);
+      
     }
   };
   
