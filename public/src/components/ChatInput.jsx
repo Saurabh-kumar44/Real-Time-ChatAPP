@@ -49,7 +49,7 @@ const Container = styled.div`
   display: grid;
   align-items: center;
   grid-template-columns: 5% 95%;
-  background-color: #080420;
+  background-color: #095a09;
   padding: 0 2rem;
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     padding: 0 1rem;
@@ -101,7 +101,7 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     gap: 2rem;
-    background-color: #ffffff34;
+    background-color: #6a6a6a;
     input {
       width: 90%;
       height: 60%;
@@ -110,7 +110,10 @@ const Container = styled.div`
       border: none;
       padding-left: 1rem;
       font-size: 1.2rem;
-
+      ::placeholder {
+        color: #ccc8c8;
+        opacity: 1; 
+      }
       &::selection {
         background-color: #9a86f3;
       }

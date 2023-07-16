@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import Logo from '../assets/logo.svg';
+import Logo from '../assets/logo1.svg';
 import styled from 'styled-components'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -74,7 +74,7 @@ function Login() {
         <form onSubmit={(event) => { handleSubmit(event) }}>
           <div className="brand">
             <img src={Logo} alt="Logo" style={{ height: "5rem" }} />
-            <h1>Snappy</h1>
+            <h1>Let's Talk</h1>
           </div>
           <input type="text" placeholder='Username' name='username' onChange={e => { handleChange(e) }} min="3"/>
           <input type="password" placeholder='Password' name='password' onChange={e => { handleChange(e) }} />
@@ -95,7 +95,7 @@ const FormContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   align-items: center;
-  background-color: #131324;
+  background-color: #2c812c;
   .brand {
     display: flex;
     align-items: center;
@@ -114,25 +114,29 @@ const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    background-color: #00000076;
+    background-color: #105810;
     border-radius: 2rem;
     padding: 5rem;
   }
   input {
     background-color: transparent;
     padding: 1rem;
-    border: 0.1rem solid #4e0eff;
+    border: 0.1rem solid #014101;
     border-radius: 0.4rem;
     color: white;
     width: 100%;
     font-size: 1rem;
+    ::placeholder {
+      color: #ccc8c8;
+      opacity: 1; 
+    }
     &:focus {
-      border: 0.1rem solid #997af0;
+      border: 0.1rem solid #0d7e0d;
       outline: none;
     }
   }
   button {
-    background-color: #4e0eff;
+    background-color: #5e0f0f;
     color: white;
     padding: 1rem 2rem;
     border: none;
@@ -142,14 +146,14 @@ const FormContainer = styled.div`
     font-size: 1rem;
     text-transform: uppercase;
     &:hover {
-      background-color: #4e0eff;
+      background-color: #782222;
     }
   }
   span {
     color: white;
     text-transform: uppercase;
     a {
-      color: #4e0eff;
+      color: #0762ff;
       text-decoration: none;
       font-weight: bold;
     }
