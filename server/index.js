@@ -32,7 +32,7 @@ const server = app.listen(process.env.PORT, () => {
 // Instance of the Socket.IO server
 const io = new Server(server, {
   cors: {
-    origin: 'https://real-time-chat-app-beta.vercel.app',
+    origin: 'https://letstalkk.vercel.app/',
     credentials: true
   }
 });
