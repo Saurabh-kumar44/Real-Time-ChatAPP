@@ -26,13 +26,13 @@ mongoose.connect(process.env.MONGO_URL, {
 
 // Start the server
 const server = app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port http://localhost:${process.env.PORT}`);
+  console.log(`Server is running on port https://lettalk-msdu.onrender.com:${process.env.PORT}`);
 });
 
 // Instance of the Socket.IO server
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://lettalk-msdu.onrender.com/',
     credentials: true
   }
 });
