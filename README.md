@@ -16,6 +16,11 @@ A real-time chat application built using React, Node.js with Express, and Socket
 - **Frontend**: React, Styled Components, Emoji Mart, Axios, Socket.IO Client
 - **Backend**: Node.js, Express, Socket.IO, MongoDB
 
+## Deployment
+
+The application is deployed on Vercel and can be accessed using the following link: [Live Demo](https://letstalkk.vercel.app/)
+
+
 ## System Requirements
 
 To get started with development, you need to install few tools
